@@ -1,0 +1,23 @@
+{
+  "kids": [
+    { "name": "Maya",  "color": "#4C9AFF", "tags": ["OMS", "Band"] },
+    { "name": "Leo", "color": "#FFA94D", "tags": ["Pine"] }
+  ],
+  "feeds": [
+    {
+      "name": "My calendar (Muse)",
+      "url": "PASTE the 'Secret address in iCal format' from Google Calendar → Settings → your calendar → Integrate calendar",
+      "mode": "tagged"
+    },
+    {
+      "name": "Oak Middle School",
+      "url": "PASTE your school calendar's public iCal URL (Google Calendar → the school calendar's settings → Public address in iCal format)",
+      "mode": "school",
+      "kid": "Maya",
+      "allDayOnly": true
+    }
+  ],
+  "weekSeconds": 75,
+  "monthSeconds": 25,
+  "refreshMinutes": 10
+}

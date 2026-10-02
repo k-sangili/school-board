@@ -1,0 +1,5 @@
+# Contains private Google Calendar iCal URLs
+SchoolBoard/BoardConfig.json
+*.xcodeproj
+.build/
+DerivedData/
