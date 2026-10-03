@@ -83,6 +83,7 @@ On Saturday and Sunday the week view looks ahead: this weekend first, then next 
 |---|---|
 | `BoardCore/` | Swift package: iCal parser + RRULE expansion, Muse title classifier, week/month date math. Platform-independent and unit-tested. |
 | `SchoolBoard/` | tvOS SwiftUI app: `BoardStore` (fetch + cache), `BoardView` (rotation, remote), `WeekView`, `MonthView`. |
+| `tools/make-assets.swift` | Draws the layered app icon, App Store icon and Top Shelf images into `Assets.xcassets` (`swift tools/make-assets.swift`). |
 | `project.yml` | XcodeGen spec. Team and bundle ID come from `DEVELOPMENT_TEAM` / `BUNDLE_ID` env vars. |
 
 ```bash
@@ -93,6 +94,5 @@ SCHOOL_ICS=/path/to/school.ics swift test
 
 ## Known gaps
 
-* No app icon / Top Shelf image yet (Xcode warns; it doesn't block a dev install).
 * Homework appears only if Muse creates it from the Classroom guardian summaries, which requires being
   added as a guardian in Google Classroom for each child.

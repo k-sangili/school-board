@@ -3,3 +3,5 @@ SchoolBoard/BoardConfig.json
 *.xcodeproj
 .build/
 DerivedData/
+.swiftpm/
+xcuserdata/
