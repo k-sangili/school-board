@@ -50,14 +50,14 @@ public struct BoardConfig: Codable, Sendable {
 
 // MARK: - Board items
 
-public enum ItemKind: Int, Sendable, Comparable {
+public enum ItemKind: Int, Codable, Sendable, Comparable {
     // Raw value = display priority within a day.
     case noSchool, test, homework, deadline, event, school
 
     public static func < (a: ItemKind, b: ItemKind) -> Bool { a.rawValue < b.rawValue }
 }
 
-public struct BoardItem: Identifiable, Hashable, Sendable {
+public struct BoardItem: Identifiable, Hashable, Codable, Sendable {
     public let id: String
     public let kid: String?
     public let kind: ItemKind

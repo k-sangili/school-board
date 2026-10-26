@@ -62,6 +62,22 @@ open SchoolBoard.xcodeproj
 
 Launch with the `-demo` argument (Scheme → Run → Arguments) to see sample data.
 
+## Apple Watch
+
+The `SchoolBoardWatch` scheme is a standalone watch app (no iPhone app needed). It uses the same
+`BoardConfig.json` and downloads the feeds itself. It shows missing work first, then today and every day in
+the next two weeks that has something on it. Tap an item to see the full title.
+
+![Watch app (demo data): missing work and today, a test day, a no-school day, item detail](docs/watch-demo.png)
+
+1. Xcode → Settings → Components: install the **watchOS** platform.
+2. Select the `SchoolBoardWatch` scheme and your paired Apple Watch (bundle ID is `$BUNDLE_ID.watch`), then press ⌘R.
+3. Add the complication: long-press the watch face → Edit → Complications → **School Board**.
+
+The complication shows the next day that matters (today until 3 pm, then the next day with anything on it):
+what's due, tests, no-school days and a red missing-work count. It downloads the feeds itself about once an
+hour, and refreshes right away whenever you open the app.
+
 ## Using it
 
 The board rotates on its own: week view (75 s), then month view (25 s). With the Siri Remote:

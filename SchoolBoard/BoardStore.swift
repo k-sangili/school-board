@@ -12,6 +12,7 @@ final class BoardStore {
     private(set) var lastUpdated: Date?
     private(set) var problems: [String] = []
     private(set) var isDemo = false
+    private var isRefreshing = false
 
     let config: BoardConfig
     private let kidColors: [String: Color]
@@ -43,12 +44,20 @@ final class BoardStore {
             return
         }
         while !Task.isCancelled {
-            await refresh(feeds)
-            try? await Task.sleep(for: .seconds((config.refreshMinutes ?? 10) * 60))
+            await refresh()
+            // After a failed fetch (often Wi-Fi still waking up), retry soon instead of
+            // leaving the error on screen for the full refresh interval.
+            let minutes = problems.isEmpty ? (config.refreshMinutes ?? 10) : 1
+            try? await Task.sleep(for: .seconds(minutes * 60))
         }
     }
 
-    private func refresh(_ feeds: [BoardConfig.Feed]) async {
+    /// Re-fetches every configured feed now, e.g. when the app returns to the foreground.
+    func refresh() async {
+        let feeds = config.feeds.filter(\.isConfigured)
+        guard !isDemo, !isRefreshing, !feeds.isEmpty else { return }
+        isRefreshing = true
+        defer { isRefreshing = false }
         let config = self.config
         let window = BoardBuilder.window(around: .now)
         let results = await withTaskGroup(of: FeedResult.self) { group in
@@ -66,6 +75,17 @@ final class BoardStore {
 
     // MARK: - Loading
 
+    /// Waits for the network instead of failing straight away (the TV's Wi-Fi can lag after
+    /// sleep), and gives large school calendars time to download.
+    nonisolated private static let session: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.waitsForConnectivity = true
+        configuration.timeoutIntervalForRequest = 60
+        configuration.timeoutIntervalForResource = 180
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        return URLSession(configuration: configuration)
+    }()
+
     private struct FeedResult: Sendable {
         let items: [BoardItem]
         let problem: String?
@@ -77,7 +97,7 @@ final class BoardStore {
         let cacheURL = cacheFile(for: feed)
         do {
             guard let url = URL(string: feed.url) else { throw URLError(.badURL) }
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await session.data(from: url)
             if let http = response as? HTTPURLResponse, http.statusCode != 200 {
                 throw URLError(.badServerResponse, userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode)"])
             }

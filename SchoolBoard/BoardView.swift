@@ -8,6 +8,7 @@ struct BoardView: View {
     enum Mode { case week, month }
 
     @Environment(BoardStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
     @State private var mode: Mode = .week
     @State private var weekOffset = 0
     @State private var monthOffset = 0
@@ -57,6 +58,9 @@ struct BoardView: View {
         #endif
         .task { await store.start() }
         .task { await tick() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Task { await store.refresh() } }
+        }
     }
 
     // MARK: - Derived
@@ -216,6 +220,7 @@ private struct KidChip: View {
 
 struct MissingStrip: View {
     @Environment(BoardStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
     let items: [BoardItem]
 
     var body: some View {
@@ -249,6 +254,7 @@ struct MissingStrip: View {
 
 struct FooterView: View {
     @Environment(BoardStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
     let mode: BoardView.Mode
 
     var body: some View {

@@ -1,6 +1,6 @@
 #!/usr/bin/env swift
 // Generates the tvOS app icon (layered), App Store icon and Top Shelf images into
-// SchoolBoard/Assets.xcassets. Run from the repo root:  swift tools/make-assets.swift
+// SchoolBoard/Assets.xcassets, and the Apple Watch icon into SchoolBoardWatch/Assets.xcassets. Run from the repo root:  swift tools/make-assets.swift
 import AppKit
 import ImageIO
 import UniformTypeIdentifiers
@@ -241,6 +241,21 @@ imagestack(brand.appendingPathComponent("App Icon.imagestack"), size: CGSize(wid
 imagestack(brand.appendingPathComponent("App Icon - App Store.imagestack"), size: CGSize(width: 1280, height: 768), scales: [1])
 imageset(brand.appendingPathComponent("Top Shelf Image.imageset"), base: "topshelf", size: CGSize(width: 1920, height: 720), scales: [1, 2], opaque: true, topShelf)
 imageset(brand.appendingPathComponent("Top Shelf Image Wide.imageset"), base: "topshelf-wide", size: CGSize(width: 2320, height: 720), scales: [1, 2], opaque: true, topShelf)
+
+// Apple Watch icon: one opaque 1024 square that watchOS masks to a circle. The 5:3 icon layers are
+// drawn onto a slightly wider centered stage so the card and check mark stay inside the circle.
+let watchRoot = URL(fileURLWithPath: "SchoolBoardWatch/Assets.xcassets")
+try? fm.removeItem(at: watchRoot)
+write(["info": info], to: watchRoot)
+let watchIcon = watchRoot.appendingPathComponent("AppIcon.appiconset")
+write(["info": info, "images": [["filename": "watch-icon.png", "idiom": "universal", "platform": "watchos", "size": "1024x1024"]]], to: watchIcon)
+try! png(CGSize(width: 1024, height: 1024), scale: 1, opaque: true) { ctx, s in
+    iconBack(ctx, s)
+    let stage = CGSize(width: s.width * 1.15, height: s.width * 1.15 * 0.6)
+    ctx.translateBy(x: (s.width - stage.width) / 2, y: (s.height - stage.height) / 2)
+    iconMiddle(ctx, stage)
+    iconFront(ctx, stage)
+}.write(to: watchIcon.appendingPathComponent("watch-icon.png"))
 
 // Flattened previews for docs / quick review
 let previews = URL(fileURLWithPath: "docs")

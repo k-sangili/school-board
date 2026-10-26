@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "BoardCore",
-    platforms: [.macOS(.v14), .tvOS(.v17)],
+    platforms: [.macOS(.v14), .tvOS(.v17), .watchOS(.v10)],
     products: [.library(name: "BoardCore", targets: ["BoardCore"])],
     targets: [
         .target(name: "BoardCore"),
